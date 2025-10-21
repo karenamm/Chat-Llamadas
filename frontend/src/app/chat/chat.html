@@ -1,0 +1,48 @@
+<div class="chat-window">
+  <div class="top-menu">
+    <div class="buttons">
+      <div class="button close"></div>
+      <div class="button minimize"></div>
+      <div class="button maximize"></div>
+    </div>
+    <div class="title">
+      Chat - {{ roomId }}
+    </div>
+  </div>
+
+  <!-- CONTROLES DE LLAMADA -->
+  <div class="call-controls" style="padding: 10px; display: flex; gap: 10px; justify-content: center;">
+    <button (click)="startCall()" [disabled]="inCall">Iniciar llamada</button>
+    <button (click)="endCall()" [disabled]="!inCall">Finalizar llamada</button>
+  </div>
+
+  <!-- LISTA DE MENSAJES -->
+  <div class="messages">
+    <div
+      *ngFor="let msg of messages"
+      class="message"
+      [ngClass]="{ right: msg.user === username, left: msg.user !== username }"
+    >
+      <div class="avatar" [ngStyle]="{ 'background-color': getAvatarColor(msg.user) }">
+        {{ msg.user[0] | uppercase }}
+      </div>
+      <div class="text-wrapper">
+        <div class="text">{{ msg.message }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT Y BOTÓN DE MENSAJE -->
+  <div class="bottom-wrapper">
+    <input
+      [(ngModel)]="message"
+      class="message-input"
+      placeholder="Escribe un mensaje..."
+      (keyup.enter)="sendMessage()"
+    />
+    <button class="send-button" (click)="sendMessage()">Enviar</button>
+  </div>
+
+  <!-- AUDIO REMOTO -->
+  <audio #remoteAudio autoplay></audio>
+</div>

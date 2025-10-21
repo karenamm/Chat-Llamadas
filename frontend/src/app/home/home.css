@@ -1,0 +1,79 @@
+.chat-window {
+  width: 400px;
+  margin: 30px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f7;
+}
+
+.top-menu {
+  background-color: #4a90e2;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-menu .buttons .button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+  display: inline-block;
+}
+
+.top-menu .buttons .close { background-color: #ff5f56; }
+.top-menu .buttons .minimize { background-color: #ffbd2e; }
+.top-menu .buttons .maximize { background-color: #27c93f; }
+
+.top-menu .title {
+  font-weight: bold;
+}
+
+.messages {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-wrapper {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+input[type="text"], select.chat-select {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.send-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.send-button:hover {
+  background-color: #357ab8;
+}
+
+.send-button:disabled {
+  background-color: #a0c4f5;
+  cursor: not-allowed;
+}

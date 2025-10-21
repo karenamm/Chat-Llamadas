@@ -1,0 +1,8 @@
+body {
+  background-color: #e8f5e9; /* 🌿 Verde pastel muy sutil */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}

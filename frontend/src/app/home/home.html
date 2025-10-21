@@ -1,0 +1,68 @@
+<div class="chat-window">
+  <div class="top-menu">
+    <div class="buttons">
+      <div class="button close"></div>
+      <div class="button minimize"></div>
+      <div class="button maximize"></div>
+    </div>
+    <div class="title">Bienvenido al Chat</div>
+  </div>
+
+  <div class="messages" style="flex-direction: column; padding: 20px; gap: 15px;">
+
+    <!-- Registro de usuario -->
+    <div class="form-group">
+      <label>Tu nombre:</label>
+      <div class="input-wrapper">
+        <input type="text" [(ngModel)]="username" placeholder="Escribe tu nombre" />
+        <button class="send-button" (click)="registerUser()" [disabled]="isRegistered">
+          {{ isRegistered ? 'Registrado' : 'Registrarse' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Selección de chat, solo si ya se registró -->
+    <div *ngIf="isRegistered">
+
+      <!-- Tipo de chat -->
+      <div class="form-group">
+        <label>Tipo de chat:</label>
+        <select [(ngModel)]="chatType" class="chat-select">
+          <option value="group">Grupal</option>
+          <option value="private">Privado</option>
+        </select>
+      </div>
+
+      <!-- Chat grupal -->
+      <div *ngIf="chatType === 'group'" class="form-group">
+        <label>Selecciona un grupo existente:</label>
+        <select [(ngModel)]="roomId" class="chat-select">
+          <option *ngFor="let room of existingRooms" [value]="room">{{ room }}</option>
+        </select>
+
+        <div class="input-wrapper">
+          <input type="text" placeholder="O escribe un nuevo grupo" #newRoom />
+          <button class="send-button" (click)="createRoom(newRoom.value)">Crear/Entrar</button>
+        </div>
+      </div>
+
+      <!-- Chat privado -->
+      <div *ngIf="chatType === 'private'" class="form-group">
+        <div *ngIf="canEnterPrivateChat(); else noUsers">
+          <label>Selecciona un usuario:</label>
+          <select [(ngModel)]="targetUser" class="chat-select">
+            <option *ngFor="let user of connectedUsers" [value]="user">{{ user }}</option>
+          </select>
+        </div>
+        <ng-template #noUsers>
+          <p style="color: red; font-weight: bold;">
+            No hay usuarios disponibles. Debes usar un chat grupal por ahora.
+          </p>
+        </ng-template>
+      </div>
+
+      <button class="send-button" (click)="enterChat()">Entrar al chat</button>
+
+    </div>
+  </div>
+</div>
