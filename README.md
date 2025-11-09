@@ -1,7 +1,7 @@
-# Chat en Tiempo Real con WebRTC y WebSocket  
+# Chat en Tiempo Real con WebRTC, WebSocket y Cliente HTTP mediante Proxy Express  
 
-Proyecto que implementa un **chat en tiempo real** con soporte para **mensajes** y **llamadas de voz** entre usuarios conectados a la misma sala.  
-El backend está desarrollado en **Spring Boot (Java)** y el frontend en **Angular (TypeScript)**.  
+Proyecto que implementa un **chat en tiempo real** con soporte para **mensajes**, **llamadas de voz** y ahora también un **cliente HTTP** que se comunica con el backend mediante un **proxy intermedio en Node.js (Express)**.  
+El backend está desarrollado en **Spring Boot (Java)**, el cliente original en **Angular (TypeScript)**, y el nuevo cliente HTTP en **HTML, CSS y JavaScript puro**.  
 
 ---
 
@@ -9,9 +9,8 @@ El backend está desarrollado en **Spring Boot (Java)** y el frontend en **Angul
 
 | Nombre completo | Rol |
 |------------------|------|
-| Karen Andrea Mosquera | Backend |
+| Karen Andrea Mosquera | Backend y Proxy HTTP |
 | Luciano Barbosa Quintero | Integración y pruebas |
-| Joshua Sayur Gallego | Frontend |
 
 ---
 
@@ -31,14 +30,27 @@ Asegúrate de tener instaladas las siguientes herramientas:
 ## 🏗️ Estructura del Proyecto  
 
 ```
-/proyecto-chat
+/Chat-Llamadas
 │
-├── backend-chat/
-│   ├── src/main/java/com/chatapp/
-│   ├── pom.xml
-│   └── ...
+├── ms-chat-socket/                 # Backend principal en Java (Spring Boot)
+│   ├── src/main/java/com/chat/socket/
+│   │   ├── controller/
+│   │   ├── service/
+│   │   ├── dto/
+│   │   └── tcp/TcpJsonServer.java  # Servidor TCP para comunicación con el proxy
+│   └── pom.xml
 │
-└── frontend-chat/
+├── proxy-http/                     # Proxy HTTP + Cliente web
+│   ├── server.js                   # Servidor Express (puerto 3000)
+│   ├── backendClient.js            # Comunicación TCP JSON con el backend
+│   ├── .env                        # Configuración del proxy (puertos/IP)
+│   ├── package.json
+│   └── web/
+│       ├── index.html              # Cliente HTTP (HTML/CSS/JS)
+│       ├── app.js
+│       └── styles.css
+│
+└── frontend-angular/               # Cliente original (fase WebSocket/WebRTC)
     ├── src/app/
     │   ├── chat/
     │   │   ├── chat.ts
@@ -60,20 +72,60 @@ git clone https://github.com/tuusuario/proyecto-chat.git
 cd proyecto-chat
 ```
 
-### 2️⃣ Ejecutar el **Backend**  
+---
+
+### 2️⃣ Ejecutar el **Backend (Spring Boot)**  
 
 ```bash
-cd backend-chat
+cd ms-chat-socket
 mvn spring-boot:run
 ```
 
-### 3️⃣ Ejecutar el **Frontend**  
+Verifica que aparezca:
+```
+[TCP] Json server escuchando en 127.0.0.1:9090
+```
+
+---
+
+### 3️⃣ Ejecutar el **Proxy HTTP (Node.js)**  
 
 ```bash
-cd ../frontend-chat
+cd ../proxy-http
 npm install
-ng serve --host 0.0.0.0 --port 4200
+npm start
 ```
+
+Debe mostrarse:
+```
+Proxy escuchando en http://localhost:3000
+Proxy → Java TCP 127.0.0.1:9090
+```
+
+---
+
+### 4️⃣ Abrir el **Cliente HTTP**  
+
+Abre en el navegador:
+```
+http://localhost:3000
+```
+
+Desde ahí podrás:
+- Crear grupos de chat.  
+- Enviar mensajes (texto o URL de audio).  
+- Consultar el historial de mensajes.  
+
+---
+
+### 5️⃣ Ejecutar el **Frontend Angular (fase WebSocket/WebRTC)**  
+
+```bash
+cd ../frontend-angular
+npm install
+ng serve --host 0.0.0.0 --port 4200
+```
+
 Accede a:
 ```
 http://localhost:4200
@@ -94,7 +146,7 @@ Si deseas probar en **dos PCs distintos**:
   ```ts
   const socket = new SockJS('http://<IP_DEL_BACKEND>:8080/ws');
   ```  
-  *(Ejemplo: `http://192.168.1.5:8080/ws`)*
+  *(Ejemplo: `http://192.168.1.5:8080/ws`)*  
 
 Luego, abre el frontend en ambos equipos con nombres de usuario distintos y la misma sala (`roomId`).
 
@@ -104,9 +156,10 @@ Luego, abre el frontend en ambos equipos con nombres de usuario distintos y la m
 
 ✅ Envío de mensajes en tiempo real entre usuarios conectados a una misma sala.  
 ✅ Llamadas de voz (WebRTC) peer-to-peer entre usuarios.  
-✅ Generación dinámica de colores de usuario.  
-✅ Soporte para múltiples salas de chat.  
-✅ Interfaz limpia y responsiva con Angular.  
+✅ Creación de grupos de chat.  
+✅ Envío de mensajes vía HTTP mediante proxy Express.  
+✅ Consulta de historial de mensajes (texto o audio).  
+✅ Integración entre frontend, proxy y backend Java.  
 
 ---
 
@@ -114,21 +167,40 @@ Luego, abre el frontend en ambos equipos con nombres de usuario distintos y la m
 
 | Componente | Tecnología |
 |-------------|-------------|
-| Frontend | Angular 17 + TypeScript |
-| Backend | Spring Boot 3 + WebSocket |
-| Comunicación | STOMP + SockJS |
+| Frontend (WebSocket) | Angular 17 + TypeScript |
+| Frontend (HTTP) | HTML + CSS + JavaScript |
+| Proxy | Node.js + Express |
+| Backend | Spring Boot 3 + Java 17 |
+| Comunicación | HTTP → TCP (JSON por línea) |
 | Llamadas | WebRTC |
 | Estilos | CSS / Angular Forms |
 | Servidor STUN | `stun:stun.l.google.com:19302` |
 
 ---
 
-## 🧠 Cómo Funciona  
+## 🧠 Flujo de Comunicación  
 
-1. Cada usuario se conecta a una sala (`roomId`) a través de WebSocket.  
-2. Los mensajes se envían y distribuyen mediante STOMP sobre SockJS.  
-3. Para llamadas, se intercambian descripciones SDP e ICE Candidates (señalización).  
-4. WebRTC establece conexión directa entre los dos clientes para transmitir audio.  
+### 🔹 Fase WebSocket (anterior)
+```
+Cliente Angular (WebSocket/STOMP)
+       ↓
+Spring Boot (WebSocketController)
+       ↓
+Distribución de mensajes en tiempo real
+       ↓
+Usuarios conectados a la misma sala
+```
+
+### 🔹 Fase HTTP con Proxy Express (actual)
+```
+Cliente Web (HTML/JS)
+       ↓ (fetch /api/...)
+Proxy Express (HTTP)
+       ↓ (TCP JSON por línea)
+Backend Java (TcpJsonServer)
+       ↓
+Persistencia / memoria del sistema
+```
 
 ---
 
@@ -136,26 +208,24 @@ Luego, abre el frontend en ambos equipos con nombres de usuario distintos y la m
 
 | Error | Causa | Solución |
 |-------|--------|----------|
-| `Can't bind to 'ngModel'` | Falta de importación de FormsModule | Asegúrate que `imports: [FormsModule]` esté en el componente |
-| `No pipe found with name 'uppercase'` | Falta CommonModule | Añadir `CommonModule` al array de imports |
-| `This expression is not constructable` | Uso incorrecto de SockJS | Importar correctamente con `import SockJS from 'sockjs-client'` |
-| Los mensajes no llegan al otro PC | Conexión a IP incorrecta o backend inaccesible | Cambiar `localhost` por la IP local del backend |
+| `java_unavailable` | Backend no está escuchando en 9090 | Ejecutar Spring Boot y confirmar `[TCP] Json server escuchando...` |
+| `405 Method Not Allowed` | Estás abriendo el HTML desde otro puerto | Acceder desde `http://localhost:3000` |
+| `ECONNREFUSED` | Proxy no logra conectar al backend | Revisar `.env` y verificar puertos |
+| `Cannot resolve symbol` en Java | Falta dependencia en Maven | Agregar `jackson-databind` y `jakarta.annotation-api` al `pom.xml` |
 
 ---
 
 ## 📸 Ejemplo de Uso  
 
-1. Inicia backend y frontend.  
-2. Abre `http://localhost:4200` en dos navegadores o PCs.  
-3. Ingresa:  
-   - Usuario A → sala `general`  
-   - Usuario B → sala `general`  
-4. Envíen mensajes o inicien una llamada de voz.  
+1. Ejecuta el backend y el proxy.  
+2. Abre `http://localhost:3000`.  
+3. Crea un grupo, envía un mensaje y consulta el historial.  
+4. Observa las respuestas JSON en el navegador.  
 
 ---
 
 ## 🧾 Licencia  
 
 Este proyecto fue desarrollado con fines académicos por los estudiantes:  
-**Karen Andrea Mosquera**, **Luciano Barbosa Quintero** y **Joshua Sayur Gallego**.  
+**Karen Andrea Mosquera** y **Luciano Barbosa Quintero.**  
 Uso libre para aprendizaje y demostración.  

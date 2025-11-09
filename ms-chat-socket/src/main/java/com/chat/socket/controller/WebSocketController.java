@@ -1,14 +1,15 @@
 package com.chat.socket.controller;
 
-import com.chat.socket.dto.ChatMessage;
 import com.chat.socket.service.ConnectedUsersService;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
-import org.springframework.context.event.EventListener;
+
+import java.util.Map;
 
 @Controller
 public class WebSocketController {
@@ -22,21 +23,30 @@ public class WebSocketController {
         this.template = template;
     }
 
+    // Acepta CUALQUIER JSON: texto, señalización WebRTC y audio (chunked)
     @MessageMapping("/chat/{roomId}")
-    public void chat(@DestinationVariable String roomId, ChatMessage message,
+    public void chat(@DestinationVariable String roomId,
+                     Map<String, Object> payload,
                      SimpMessageHeaderAccessor headerAccessor) {
-        System.out.println("[WS] RECEIVED /app/chat/" + roomId + " -> " + message.getUser() + ": " + message.getMessage()
-                + "  sessionId=" + headerAccessor.getSessionId());
-        if (!connectedUsersService.getUsers().contains(message.getUser())) {
-            connectedUsersService.addUser(message.getUser());
+
+        String user = payload != null && payload.get("user") != null
+                ? String.valueOf(payload.get("user"))
+                : "anon";
+
+        System.out.println("[WS] /app/chat/" + roomId + " <- " + user +
+                " keys=" + (payload != null ? payload.keySet() : "null") +
+                " session=" + headerAccessor.getSessionId());
+
+        if (user != null && !connectedUsersService.getUsers().contains(user)) {
+            connectedUsersService.addUser(user);
         }
-        // reenvía al topic (broadcast)
-        template.convertAndSend("/topic/" + roomId, message);
-        System.out.println("[WS] SENT to /topic/" + roomId + " : " + message);
+
+        // 🔁 Relay "tal cual": preserva audioBase64/chunks, signalType, candidate, etc.
+        template.convertAndSend("/topic/" + roomId, payload);
     }
 
     @EventListener
-    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        System.out.println("[WS] Disconnect sessionId=" + event.getSessionId());
+    public void handleDisconnect(SessionDisconnectEvent event) {
+        System.out.println("[WS] Disconnect session=" + event.getSessionId());
     }
 }

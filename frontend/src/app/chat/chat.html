@@ -11,7 +11,7 @@
   </div>
 
   <!-- CONTROLES DE LLAMADA -->
-  <div class="call-controls" style="padding: 10px; display: flex; gap: 10px; justify-content: center;">
+  <div class="call-controls">
     <button (click)="startCall()" [disabled]="inCall">Iniciar llamada</button>
     <button (click)="endCall()" [disabled]="!inCall">Finalizar llamada</button>
   </div>
@@ -26,13 +26,36 @@
       <div class="avatar" [ngStyle]="{ 'background-color': getAvatarColor(msg.user) }">
         {{ msg.user[0] | uppercase }}
       </div>
+
       <div class="text-wrapper">
-        <div class="text">{{ msg.message }}</div>
+        <!-- Texto normal -->
+        <div class="text" *ngIf="!msg.audio">{{ msg.message }}</div>
+
+        <!-- Burbuja de audio estilo WhatsApp -->
+        <div class="audio-bubble" *ngIf="msg.audio">
+          <button class="audio-play" (click)="togglePlay(msg)">
+            <span *ngIf="!msg.isPlaying">▶</span>
+            <span *ngIf="msg.isPlaying">⏸</span>
+          </button>
+
+          <div class="audio-track" (click)="seek(msg, $event)">
+            <div class="audio-progress" [style.width.%]="(msg.currentTime / (msg.audio.duration || 1)) * 100"></div>
+          </div>
+
+          <div class="audio-times">
+            <span class="audio-time">{{ formatTime(msg.currentTime) }}</span>
+            <span class="audio-duration">{{ formatTime(msg.audio.duration) }}</span>
+          </div>
+        </div>
+
+        <div class="meta" *ngIf="msg.createdAt">
+          {{ msg.createdAt | date:'shortTime' }}
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- INPUT Y BOTÓN DE MENSAJE -->
+  <!-- INPUT Y ACCIONES (tipo WhatsApp) -->
   <div class="bottom-wrapper">
     <input
       [(ngModel)]="message"
@@ -40,9 +63,32 @@
       placeholder="Escribe un mensaje..."
       (keyup.enter)="sendMessage()"
     />
+
     <button class="send-button" (click)="sendMessage()">Enviar</button>
+
+    <!-- Push-to-talk: Mantener para grabar -->
+    <button
+      class="ptt-button"
+      (mousedown)="pttDown($event)"
+      (mouseup)="pttUp($event)"
+      (mouseleave)="pttCancel($event)"
+      (touchstart)="pttDown($event)"
+      (touchend)="pttUp($event)"
+      (touchcancel)="pttCancel($event)"
+      [class.recording]="isRecording"
+      title="Mantén para grabar nota de voz"
+    >
+      🎙️
+    </button>
   </div>
 
-  <!-- AUDIO REMOTO -->
+  <!-- Barra de grabación -->
+  <div class="recording-bar" *ngIf="isRecording">
+    <div class="dot"></div>
+    <div class="label">Grabando… {{ recordElapsed | date:'mm:ss':'UTC' }}</div>
+    <div class="hint">Suelta para enviar</div>
+  </div>
+
+  <!-- AUDIO REMOTO DE LLAMADA -->
   <audio #remoteAudio autoplay></audio>
 </div>
