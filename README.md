@@ -5,7 +5,7 @@ El backend está desarrollado en **Spring Boot (Java)**, el cliente original en 
 
 ---
 
-## 👥 Integrantes del Proyecto  
+##  Integrantes del Proyecto  
 
 | Nombre completo | Rol |
 |------------------|------|
@@ -14,7 +14,7 @@ El backend está desarrollado en **Spring Boot (Java)**, el cliente original en 
 
 ---
 
-## ⚙️ Requisitos Previos  
+##  Requisitos Previos  
 
 Asegúrate de tener instaladas las siguientes herramientas:  
 
@@ -27,7 +27,7 @@ Asegúrate de tener instaladas las siguientes herramientas:
 
 ---
 
-## 🏗️ Estructura del Proyecto  
+##  Estructura del Proyecto  
 
 ```
 /Chat-Llamadas
@@ -64,9 +64,9 @@ Asegúrate de tener instaladas las siguientes herramientas:
 
 ---
 
-## 🚀 Ejecución del Proyecto  
+##  Ejecución del Proyecto  
 
-### 1️⃣ Clonar el repositorio  
+###  Clonar el repositorio  
 ```bash
 git clone https://github.com/tuusuario/proyecto-chat.git
 cd proyecto-chat
@@ -74,7 +74,7 @@ cd proyecto-chat
 
 ---
 
-### 2️⃣ Ejecutar el **Backend (Spring Boot)**  
+###  Ejecutar el **Backend (Spring Boot)**  
 
 ```bash
 cd ms-chat-socket
@@ -88,7 +88,7 @@ Verifica que aparezca:
 
 ---
 
-### 3️⃣ Ejecutar el **Proxy HTTP (Node.js)**  
+###  Ejecutar el **Proxy HTTP (Node.js)**  
 
 ```bash
 cd ../proxy-http
@@ -104,7 +104,7 @@ Proxy → Java TCP 127.0.0.1:9090
 
 ---
 
-### 4️⃣ Abrir el **Cliente HTTP**  
+###  Abrir el **Cliente HTTP**  
 
 Abre en el navegador:
 ```
@@ -118,7 +118,7 @@ Desde ahí podrás:
 
 ---
 
-### 5️⃣ Ejecutar el **Frontend Angular (fase WebSocket/WebRTC)**  
+###  Ejecutar el **Frontend Angular (fase WebSocket/WebRTC)**  
 
 ```bash
 cd ../frontend-angular
@@ -133,7 +133,7 @@ http://localhost:4200
 
 ---
 
-## 🌐 Conexión entre Computadores  
+##  Conexión entre Computadores  
 
 Si deseas probar en **dos PCs distintos**:
 
@@ -152,18 +152,18 @@ Luego, abre el frontend en ambos equipos con nombres de usuario distintos y la m
 
 ---
 
-## 💬 Funcionalidades Principales  
+##  Funcionalidades Principales  
 
-✅ Envío de mensajes en tiempo real entre usuarios conectados a una misma sala.  
-✅ Llamadas de voz (WebRTC) peer-to-peer entre usuarios.  
-✅ Creación de grupos de chat.  
-✅ Envío de mensajes vía HTTP mediante proxy Express.  
-✅ Consulta de historial de mensajes (texto o audio).  
-✅ Integración entre frontend, proxy y backend Java.  
+- Envío de mensajes en tiempo real entre usuarios conectados a una misma sala.  
+- Llamadas de voz (WebRTC) peer-to-peer entre usuarios.  
+- Creación de grupos de chat.  
+- Envío de mensajes vía HTTP mediante proxy Express.  
+- Consulta de historial de mensajes (texto o audio).  
+- Integración entre frontend, proxy y backend Java.  
 
 ---
 
-## 🧩 Tecnologías Utilizadas  
+##  Tecnologías Utilizadas  
 
 | Componente | Tecnología |
 |-------------|-------------|
@@ -178,9 +178,9 @@ Luego, abre el frontend en ambos equipos con nombres de usuario distintos y la m
 
 ---
 
-## 🧠 Flujo de Comunicación  
+##  Flujo de Comunicación  
 
-### 🔹 Fase WebSocket (anterior)
+###  Fase WebSocket (anterior)
 ```
 Cliente Angular (WebSocket/STOMP)
        ↓
@@ -191,7 +191,7 @@ Distribución de mensajes en tiempo real
 Usuarios conectados a la misma sala
 ```
 
-### 🔹 Fase HTTP con Proxy Express (actual)
+###  Fase HTTP con Proxy Express (actual)
 ```
 Cliente Web (HTML/JS)
        ↓ (fetch /api/...)
@@ -204,7 +204,7 @@ Persistencia / memoria del sistema
 
 ---
 
-## 🛠️ Posibles Errores y Soluciones  
+##  Posibles Errores y Soluciones  
 
 | Error | Causa | Solución |
 |-------|--------|----------|
@@ -215,7 +215,7 @@ Persistencia / memoria del sistema
 
 ---
 
-## 📸 Ejemplo de Uso  
+##  Ejemplo de Uso  
 
 1. Ejecuta el backend y el proxy.  
 2. Abre `http://localhost:3000`.  
@@ -224,7 +224,7 @@ Persistencia / memoria del sistema
 
 ---
 
-## 🧾 Licencia  
+##  Licencia  
 
 Este proyecto fue desarrollado con fines académicos por los estudiantes:  
 **Karen Andrea Mosquera** y **Luciano Barbosa Quintero.**  
