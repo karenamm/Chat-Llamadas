@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Cliente HTTP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body>
+    <div class="container">
+        <h1>Cliente HTTP</h1>
+
+        <section class="card">
+        <h2>Crear grupo</h2>
+        <input id="groupName" placeholder="Nombre del grupo">
+        <input id="groupMembers" placeholder="Miembros (coma: user1,user2)">
+        <button id="btnCreateGroup">Crear</button>
+        <pre id="groupOut"></pre>
+        </section>
+
+        <section class="card">
+        <h2>Enviar mensaje</h2>
+        <div class="row">
+            <select id="toType">
+            <option value="user">Usuario</option>
+            <option value="group">Grupo</option>
+            </select>
+            <input id="toId" placeholder="Destino (userId o groupId)">
+        </div>
+        <div class="row">
+            <input id="fromId" placeholder="Remitente (userId)">
+        </div>
+        <div class="row">
+            <select id="contentType">
+            <option value="text">Texto</option>
+            <option value="audio">Audio (URL)</option>
+            </select>
+            <input id="textOrUrl" placeholder="Texto del mensaje o URL de audio">
+        </div>
+        <button id="btnSend">Enviar</button>
+        <pre id="sendOut"></pre>
+        </section>
+
+        <section class="card">
+        <h2>Historial</h2>
+        <div class="row">
+            <select id="scope">
+            <option value="user">Usuario</option>
+            <option value="group">Grupo</option>
+            </select>
+            <input id="scopeId" placeholder="ID usuario o grupo">
+            <button id="btnHistory">Ver historial</button>
+        </div>
+        <div id="history"></div>
+        </section>
+    </div>
+</body>
+</html>
