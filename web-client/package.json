@@ -11,11 +11,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.0",
+    "style-loader": "^4.0.0",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.4",
-    "html-webpack-plugin": "^5.6.0",
-    "css-loader": "^7.1.2",
-    "style-loader": "^4.0.0"
+    "webpack-dev-server": "^5.0.4"
+  },
+  "dependencies": {
+    "@stomp/stompjs": "^7.2.1",
+    "sockjs-client": "^1.6.1"
   }
 }
